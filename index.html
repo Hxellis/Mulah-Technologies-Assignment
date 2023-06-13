@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lnag="en">
+    <head>
+        <title>Mulah Technologies Assignment</title>
+        <script type="text/javascript" src="./papaparse.min.js"></script>
+        <style>
+            table {
+                border-collapse: collapse;
+                min-width: 500px;
+                table-layout: fixed;
+                
+            }
+            .center {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            td,th {
+                border: 1px solid;
+                padding: 10px 0px 10px 0px;
+                text-align: center;
+                width: 50%;
+            }
+            h1 {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Table 1</h1>
+        <table class="center" id="data-table"></table>
+
+        <br>
+        <hr>
+
+        <h1>Table 2</h1>
+        <table class="center">
+            <tr>
+                <th>Category</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Alpha</td>
+                <td id="Alpha"> </td>
+            </tr>
+            <tr>
+                <td>Beta</td>
+                <td id="Beta"> </td>
+            </tr>
+            <tr>
+                <td>Charlie</td>
+                <td id="Charlie"> </td>
+            </tr>
+        </table>
+
+        <br>
+
+
+        <script> 
+            Papa.parse("./Table_Input.csv",{
+                download:true,
+                header: true,
+                complete: function(result) {
+                    let table = document.getElementById("data-table");
+
+                    let row = table.createTHead().insertRow();
+                    //has to be seperate or else css won't apply for some reason
+                    let th1 = document.createElement('th');
+                    let th2 = document.createElement('th');
+                    th1.appendChild(document.createTextNode(result.meta.fields[0]));
+                    th2.appendChild(document.createTextNode(result.meta.fields[1]));
+                    row.appendChild(th1);
+                    row.appendChild(th2);
+
+                    const alpha = parseInt(result.data.find(index => index["Index #"] === "A5").Value) + parseInt(result.data.find(index => index["Index #"] === "A20").Value);
+                    const beta = parseInt(result.data.find(index => index["Index #"] === "A15").Value) / parseInt(result.data.find(index => index["Index #"] === "A7").Value);
+                    const charlie = parseInt(result.data.find(index => index["Index #"] === "A13").Value) * parseInt(result.data.find(index => index["Index #"] === "A12").Value);
+
+                    document.getElementById("Alpha").innerHTML = alpha;
+                    document.getElementById("Beta").innerHTML = beta;
+                    document.getElementById("Charlie").innerHTML = charlie;
+
+
+                    result.data.map((data, index) => {
+                        console.log();
+                        let row = table.createTHead().insertRow();
+                        //same as above
+                        let td1 = document.createElement('td');
+                        let td2 = document.createElement('td');
+                        td1.appendChild(document.createTextNode(data["Index #"]));
+                        td2.appendChild(document.createTextNode(data.Value));
+                        row.appendChild(td1);
+                        row.appendChild(td2);
+                        
+                        //generateTableHead(table, data);
+                    })
+                }
+            });
+        </script>
+        
+    </body>
+</html>
